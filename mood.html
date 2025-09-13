@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Tracker - My Private Journal</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .mood-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
+            padding: 2rem 0;
+        }
+        
+        .mood-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .mood-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto 3rem;
+            padding: 0 1.5rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-100);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+        
+        .mood-chart {
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-100);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chart-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gray-300);
+            background: white;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .chart-btn.active {
+            background: var(--lavender);
+            border-color: var(--lavender);
+            color: white;
+        }
+        
+        .chart-container {
+            height: 300px;
+            display: flex;
+            align-items: end;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--lavender), rgba(199, 184, 234, 0.3));
+            border-radius: 0.5rem 0.5rem 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .chart-bar:hover {
+            background: linear-gradient(to top, var(--mint-green), rgba(191, 227, 208, 0.3));
+        }
+        
+        .chart-bar:nth-child(2n) {
+            background: linear-gradient(to top, var(--mint-green), rgba(191, 227, 208, 0.3));
+        }
+        
+        .chart-bar:nth-child(3n) {
+            background: linear-gradient(to top, var(--soft-peach), rgba(255, 217, 192, 0.3));
+        }
+        
+        .chart-label {
+            position: absolute;
+            bottom: -1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+        
+        .mood-patterns {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-100);
+        }
+        
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .pattern-section h4 {
+            color: var(--gray-800);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .pattern-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .pattern-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: var(--gray-50);
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+        }
+        
+        .pattern-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .quick-log {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--lavender);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .quick-log:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div style="flex: 1;"></div>
+            <div style="text-align: center;">
+                <h1 class="logo">My Private Journal</h1>
+            </div>
+            <nav class="nav" style="flex: 1; justify-content: flex-end;">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="journal.html" class="nav-link">Journal</a>
+                <a href="mood.html" class="nav-link active">Mood Tracker</a>
+                <a href="cbt.html" class="nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                    CBT Prompts
+                </a>
+                <a href="settings.html" class="nav-link">Settings</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="mood-page">
+        <div class="container">
+            <div class="mood-header">
+                <h2>Mood Tracker</h2>
+                <p style="color: var(--gray-600); font-size: var(--font-size-lg);">
+                    Understand your emotional patterns and track your wellbeing over time
+                </p>
+            </div>
+
+            <!-- Mood Statistics -->
+            <div class="mood-stats">
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--mint-green);">7.2</div>
+                    <div class="stat-label">Average Mood Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--lavender);">23</div>
+                    <div class="stat-label">Days Tracked This Month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--soft-peach);">85%</div>
+                    <div class="stat-label">Positive Days</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--gray-600);">12</div>
+                    <div class="stat-label">Current Streak</div>
+                </div>
+            </div>
+
+            <!-- Mood Chart -->
+            <div class="mood-chart">
+                <div class="chart-header">
+                    <h3 style="margin: 0;">Mood Trends</h3>
+                    <div class="chart-controls">
+                        <button class="chart-btn active" data-period="week">7 Days</button>
+                        <button class="chart-btn" data-period="month">30 Days</button>
+                        <button class="chart-btn" data-period="year">1 Year</button>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-bar" style="height: 80%;">
+                        <div class="chart-label">Mon</div>
+                    </div>
+                    <div class="chart-bar" style="height: 95%;">
+                        <div class="chart-label">Tue</div>
+                    </div>
+                    <div class="chart-bar" style="height: 70%;">
+                        <div class="chart-label">Wed</div>
+                    </div>
+                    <div class="chart-bar" style="height: 85%;">
+                        <div class="chart-label">Thu</div>
+                    </div>
+                    <div class="chart-bar" style="height: 90%;">
+                        <div class="chart-label">Fri</div>
+                    </div>
+                    <div class="chart-bar" style="height: 75%;">
+                        <div class="chart-label">Sat</div>
+                    </div>
+                    <div class="chart-bar" style="height: 88%;">
+                        <div class="chart-label">Sun</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; font-size: 0.875rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 12px; height: 12px; background: var(--mint-green); border-radius: 2px;"></div>
+                        <span>Positive</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 12px; height: 12px; background: var(--lavender); border-radius: 2px;"></div>
+                        <span>Neutral</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 12px; height: 12px; background: var(--soft-peach); border-radius: 2px;"></div>
+                        <span>Challenging</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mood Patterns -->
+            <div class="mood-patterns">
+                <h3 style="text-align: center; margin-bottom: 2rem;">Your Patterns & Insights</h3>
+                
+                <div class="pattern-grid">
+                    <div class="pattern-section">
+                        <h4>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12,6 12,12 16,14"/>
+                            </svg>
+                            Best Times of Day
+                        </h4>
+                        <ul class="pattern-list">
+                            <li class="pattern-item">
+                                <div class="pattern-icon" style="background: var(--mint-green);"></div>
+                                <span>Morning (8-11 AM) - Usually calm and focused</span>
+                            </li>
+                            <li class="pattern-item">
+                                <div class="pattern-icon" style="background: var(--soft-peach);"></div>
+                                <span>Evening (6-8 PM) - Often more social and happy</span>
+                            </li>
+                            <li class="pattern-item">
+                                <div class="pattern-icon" style="background: var(--lavender);"></div>
+                                <span>Late night - Variable, depends on sleep</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="pattern-section">
+                        <h4>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15V6"/>
+                                <path d="M21 21H3"/>
+                                <path d="m7 8 4-4 4 4"/>
+                                <path d="m7 21 4-4 4 4"/>
+                            </svg>
+                            Mood Boosters
+                        </h4>
+                        <ul class="pattern-list">
+                            <li class="pattern-item">
+                                <div class="pattern-icon" style="background: var(--mint-green);"></div>
+                                <span>Spending time with friends</span>
+                            </li>
+                            <li class="pattern-item">
+                                <div class="pattern-icon" style="background: var(--mint-green);"></div>
+                                <span>Completing tasks early</span>
+                            </li>
+                            <li class="pattern-item">
+                                <div class="pattern-icon" style="background: var(--mint-green);"></div>
+                                <span>Getting enough sleep (7+ hours)</span>
+                            </li>
+                            <li class="pattern-item">
+                                <div class="pattern-icon" style="background: var(--mint-green);"></div>
+                                <span>Sunny weather days</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="background: var(--gray-50); border-radius: 1rem; padding: 1.5rem; margin-top: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--gray-800);">Weekly Reflection</h4>
+                    <p style="color: var(--gray-600); line-height: 1.6; margin: 0;">
+                        This week you've shown great consistency in tracking your moods! Your happiest days tend to coincide with 
+                        social activities and completing important tasks. Consider scheduling more social time during weekdays when 
+                        your mood tends to dip slightly.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Quick Mood Log Button -->
+    <button class="quick-log" id="quickLogBtn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+    </button>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#" class="footer-link">About</a>
+                <a href="#" class="footer-link">Contact</a>
+                <a href="#" class="footer-link">Privacy Policy</a>
+            </div>
+            
+            <div class="footer-dots">
+                <div class="footer-dot footer-dot-1"></div>
+                <div class="footer-dot footer-dot-2"></div>
+                <div class="footer-dot footer-dot-3"></div>
+                <div class="footer-dot footer-dot-4"></div>
+                <div class="footer-dot footer-dot-5"></div>
+            </div>
+            
+            <p class="footer-copyright">© 2024 My Private Journal. A safe space for your thoughts.</p>
+        </div>
+    </footer>
+
+    <script src="mood.js"></script>
+</body>
+</html>

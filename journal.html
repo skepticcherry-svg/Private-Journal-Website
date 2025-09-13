@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal - My Private Journal</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .journal-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
+            padding: 2rem 0;
+        }
+        
+        .journal-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .journal-form {
+            max-width: 42rem;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--gray-100);
+        }
+        
+        .mood-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .mood-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 2rem;
+            background: var(--gray-50);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+        
+        .mood-option:hover {
+            background: white;
+            box-shadow: var(--shadow);
+        }
+        
+        .mood-option.selected {
+            border-color: var(--lavender);
+            background: white;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .mood-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .mood-happy .mood-dot { background-color: #fef08a; }
+        .mood-calm .mood-dot { background-color: var(--mint-green); }
+        .mood-sad .mood-dot { background-color: #93c5fd; }
+        .mood-anxious .mood-dot { background-color: #f9a8d4; }
+        .mood-excited .mood-dot { background-color: var(--soft-peach); }
+        
+        .entry-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-100);
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        
+        .recent-entries {
+            max-width: 42rem;
+            margin: 3rem auto 0;
+            padding: 0 1.5rem;
+        }
+        
+        .entry-item {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--gray-100);
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s ease;
+        }
+        
+        .entry-item:hover {
+            box-shadow: var(--shadow-md);
+        }
+        
+        .entry-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        
+        .entry-preview {
+            color: var(--gray-700);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div style="flex: 1;"></div>
+            <div style="text-align: center;">
+                <h1 class="logo">My Private Journal</h1>
+            </div>
+            <nav class="nav" style="flex: 1; justify-content: flex-end;">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="journal.html" class="nav-link active">Journal</a>
+                <a href="mood.html" class="nav-link">Mood Tracker</a>
+                <a href="cbt.html" class="nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                    CBT Prompts
+                </a>
+                <a href="settings.html" class="nav-link">Settings</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="journal-page">
+        <div class="container">
+            <div class="journal-header">
+                <h2>Write Your Thoughts</h2>
+                <p style="color: var(--gray-600); font-size: var(--font-size-lg);">
+                    Express yourself freely in your private space
+                </p>
+            </div>
+
+            <div class="journal-form" id="journalForm">
+                <div class="form-group">
+                    <label class="form-label">How are you feeling today?</label>
+                    <div class="mood-selector">
+                        <div class="mood-option mood-happy" data-mood="happy">
+                            <div class="mood-dot"></div>
+                            <span>Happy</span>
+                        </div>
+                        <div class="mood-option mood-calm" data-mood="calm">
+                            <div class="mood-dot"></div>
+                            <span>Calm</span>
+                        </div>
+                        <div class="mood-option mood-sad" data-mood="sad">
+                            <div class="mood-dot"></div>
+                            <span>Sad</span>
+                        </div>
+                        <div class="mood-option mood-anxious" data-mood="anxious">
+                            <div class="mood-dot"></div>
+                            <span>Anxious</span>
+                        </div>
+                        <div class="mood-option mood-excited" data-mood="excited">
+                            <div class="mood-dot"></div>
+                            <span>Excited</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="journalTitle" class="form-label">Entry Title (Optional)</label>
+                    <input type="text" id="journalTitle" class="form-input" placeholder="Give your entry a title...">
+                </div>
+
+                <div class="form-group">
+                    <label for="journalContent" class="form-label">Your Thoughts</label>
+                    <textarea 
+                        id="journalContent" 
+                        class="form-textarea" 
+                        placeholder="What's on your mind? Write freely about your day, feelings, or anything else..."
+                        style="min-height: 300px;"
+                    ></textarea>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" id="saveAsDraft">Save as Draft</button>
+                    <button type="button" class="btn btn-primary" id="saveEntry">Save Entry</button>
+                </div>
+
+                <div class="entry-stats">
+                    <span id="wordCount">0 words</span>
+                    <span id="currentTime">Today, 4:23 PM</span>
+                </div>
+            </div>
+
+            <div class="recent-entries">
+                <h3 style="margin-bottom: 1.5rem; color: var(--gray-800);">Recent Entries</h3>
+                
+                <div class="entry-item">
+                    <div class="entry-meta">
+                        <span>Yesterday, 7:15 PM</span>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="mood-dot" style="background-color: var(--mint-green);"></div>
+                            <span>Calm</span>
+                        </div>
+                    </div>
+                    <div class="entry-preview">
+                        Had a really productive day studying for finals. Finally understanding calculus concepts that seemed impossible last week. Feeling more confident about the exam next Tuesday...
+                    </div>
+                </div>
+
+                <div class="entry-item">
+                    <div class="entry-meta">
+                        <span>2 days ago, 3:42 PM</span>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="mood-dot" style="background-color: #fef08a;"></div>
+                            <span>Happy</span>
+                        </div>
+                    </div>
+                    <div class="entry-preview">
+                        Celebrated my friend Sarah's birthday today! We went to that new café downtown and the atmosphere was so cozy. Sometimes simple moments with good friends are exactly what I need...
+                    </div>
+                </div>
+
+                <div class="entry-item">
+                    <div class="entry-meta">
+                        <span>3 days ago, 9:30 PM</span>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="mood-dot" style="background-color: #f9a8d4;"></div>
+                            <span>Anxious</span>
+                        </div>
+                    </div>
+                    <div class="entry-preview">
+                        Feeling overwhelmed with all the assignments due this week. Made a priority list and scheduled study sessions. Breaking everything down into smaller tasks helps reduce the anxiety...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#" class="footer-link">About</a>
+                <a href="#" class="footer-link">Contact</a>
+                <a href="#" class="footer-link">Privacy Policy</a>
+            </div>
+            
+            <div class="footer-dots">
+                <div class="footer-dot footer-dot-1"></div>
+                <div class="footer-dot footer-dot-2"></div>
+                <div class="footer-dot footer-dot-3"></div>
+                <div class="footer-dot footer-dot-4"></div>
+                <div class="footer-dot footer-dot-5"></div>
+            </div>
+            
+            <p class="footer-copyright">© 2024 My Private Journal. A safe space for your thoughts.</p>
+        </div>
+    </footer>
+
+    <script src="journal.js"></script>
+</body>
+</html>
